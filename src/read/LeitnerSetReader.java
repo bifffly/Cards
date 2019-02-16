@@ -1,25 +1,27 @@
 package read;
 
 import deck.Card;
-import deck.Deck;
 import deck.Field;
+import leitner.LeitnerEnum;
+import leitner.LeitnerSet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class DeckReader {
-    private Deck deck;
+public class LeitnerSetReader {
+    private LeitnerSet leitnerSet;
     private File file;
     private Scanner scanner;
     private List<String> fieldNames;
+    private LeitnerEnum[] enums = LeitnerEnum.values();
 
     class ReadException extends RuntimeException {
         ReadException(String message) { super(message); }
     }
 
-    public DeckReader(File file) {
-        this.deck = new Deck();
+    public LeitnerSetReader(File file) {
+        this.leitnerSet = new LeitnerSet();
         this.file = file;
         try {
             scanner = new Scanner(file);
@@ -35,16 +37,13 @@ public class DeckReader {
         if (scanner.hasNext()) {
             String titleLine = scanner.nextLine();
             if (titleLine.endsWith(":")) {
-                deck.setName(titleLine.substring(0, titleLine.length() - 1));
+                leitnerSet.setName(titleLine.substring(0, titleLine.length() - 1));
             }
             else {
                 throw new ReadException("Expect title string as first line.");
             }
-            if (scanner.hasNext()) {
-                fieldNames = getFieldNames();
-            }
             while (scanner.hasNext()) {
-                deck.addCard(scanCard());
+                scanCard();
             }
         }
         else {
@@ -58,23 +57,30 @@ public class DeckReader {
         return Arrays.asList(fieldArr);
     }
 
-    private Card scanCard() {
+    private void scanCard() {
         String line = scanner.nextLine();
-        String[] fieldArr = line.split(",");
-        if (fieldArr.length != fieldNames.size()) {
-            throw new ReadException("Mismatching field lengths.");
-        }
-        List<String> fieldList = Arrays.asList(fieldArr);
-        Iterator<String> fieldIterator = fieldNames.iterator();
-        Iterator<String> cardIterator = fieldList.iterator();
-        List<Field> fields = new ArrayList<>();
-        while (fieldIterator.hasNext() && cardIterator.hasNext()) {
-            fields.add(new Field(fieldIterator.next(), cardIterator.next()));
-        }
-        return new Card(fields);
+        int enumInteger = Integer.parseInt(line.substring(line.length() - 1, line.length()));
+        LeitnerEnum leitnerEnum = enums[enumInteger];
+        line = line.substring(1, line.length() - 3);
+
+        leitnerSet.getLeitnerBox(leitnerEnum).add(new Card(readFields(line)));
     }
 
-    public Deck getDeck() {
-        return deck;
+    private List<Field> readFields(String string) {
+        List<Field> fields = new ArrayList<>();
+        for (String field : string.split(",")) {
+            field = field.replaceAll("\\s+", "");
+            field = field.substring(1, field.length() - 1);
+            String[] arr = field.split(":");
+            if (arr.length != 2) {
+                throw new ReadException("Malformed card.");
+            }
+            fields.add(new Field(arr[0], arr[1]));
+        }
+        return fields;
+    }
+
+    public LeitnerSet getLeitnerSet() {
+        return leitnerSet;
     }
 }

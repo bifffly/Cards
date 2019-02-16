@@ -2,24 +2,28 @@ package leitner;
 
 import deck.Card;
 
-import java.util.HashSet;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
+import static leitner.LeitnerEnum.*;
 
 public class LeitnerSet {
-    private Set<LeitnerBox> leitnerSet;
+    private List<LeitnerBox> leitnerSet;
+    private String name;
+    private static Map<String, Integer> map;
+
+    static {
+        map = new HashMap<>();
+        int i = 0;
+        for (LeitnerEnum leitnerEnum : LeitnerEnum.values()) {
+            map.put(leitnerEnum.toString(), i);
+            i++;
+        }
+    }
 
     public LeitnerSet() {
-        leitnerSet = new HashSet<>();
-        leitnerSet.add(new LeitnerBox(null));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.DAILY));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.BIWEEKLY));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.WEEKLY));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.TWOWEEKS));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.THREEWEEKS));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.MONTHLY));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.SIXWEEKS));
-        leitnerSet.add(new LeitnerBox(LeitnerEnum.TWOMONTHS));
+        leitnerSet = new ArrayList<>();
+        for (LeitnerEnum value : LeitnerEnum.values()) {
+            leitnerSet.add(new LeitnerBox(value));
+        }
     }
 
     public LeitnerBox getLeitnerBox(LeitnerEnum leitnerEnum) {
@@ -33,28 +37,30 @@ public class LeitnerSet {
 
     private LeitnerEnum getPromoted(LeitnerEnum leitnerEnum) {
         switch (leitnerEnum) {
-            case DAILY: return LeitnerEnum.BIWEEKLY;
-            case BIWEEKLY: return LeitnerEnum.WEEKLY;
-            case WEEKLY: return LeitnerEnum.TWOWEEKS;
-            case TWOWEEKS: return LeitnerEnum.THREEWEEKS;
-            case THREEWEEKS: return LeitnerEnum.MONTHLY;
-            case MONTHLY: return LeitnerEnum.SIXWEEKS;
-            case SIXWEEKS: return LeitnerEnum.TWOWEEKS;
-            case TWOMONTHS: return LeitnerEnum.TWOMONTHS;
+            case NOTINTRODUCED: return LeitnerEnum.DAILY;
+            case DAILY: return BIWEEKLY;
+            case BIWEEKLY: return WEEKLY;
+            case WEEKLY: return TWOWEEKS;
+            case TWOWEEKS: return THREEWEEKS;
+            case THREEWEEKS: return MONTHLY;
+            case MONTHLY: return SIXWEEKS;
+            case SIXWEEKS: return TWOWEEKS;
+            case TWOMONTHS: return TWOMONTHS;
             default: return null;
         }
     }
 
     private LeitnerEnum getDemoted(LeitnerEnum leitnerEnum) {
         switch (leitnerEnum) {
-            case DAILY: return LeitnerEnum.DAILY;
-            case BIWEEKLY: return LeitnerEnum.DAILY;
-            case WEEKLY: return LeitnerEnum.BIWEEKLY;
-            case TWOWEEKS: return LeitnerEnum.WEEKLY;
-            case THREEWEEKS: return LeitnerEnum.TWOWEEKS;
-            case MONTHLY: return LeitnerEnum.THREEWEEKS;
-            case SIXWEEKS: return LeitnerEnum.MONTHLY;
-            case TWOMONTHS: return LeitnerEnum.SIXWEEKS;
+            case NOTINTRODUCED: return null;
+            case DAILY: return DAILY;
+            case BIWEEKLY: return DAILY;
+            case WEEKLY: return BIWEEKLY;
+            case TWOWEEKS: return WEEKLY;
+            case THREEWEEKS: return TWOWEEKS;
+            case MONTHLY: return THREEWEEKS;
+            case SIXWEEKS: return MONTHLY;
+            case TWOMONTHS: return SIXWEEKS;
             default: return null;
         }
     }
@@ -69,7 +75,7 @@ public class LeitnerSet {
     }
 
     private boolean contains(Card card) {
-        return getContainer(card) == null;
+        return getContainer(card) != null;
     }
 
     public void promoteCard(Card card) {
@@ -90,5 +96,25 @@ public class LeitnerSet {
             leitnerBox.remove(card);
             destination.add(card);
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(name + ":\n");
+        for (LeitnerBox leitnerBox : leitnerSet) {
+            for (Card card : leitnerBox.getCards()) {
+                sb.append(card.toString() + ":" + map.get(leitnerBox.getLeitnerEnum().toString()) + "\n");
+            }
+        }
+        return sb.toString();
     }
 }

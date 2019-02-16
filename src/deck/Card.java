@@ -26,7 +26,7 @@ public class Card {
 
     @Override
     public String toString() {
-        StringJoiner sj = new StringJoiner(",\n", "[", "]");
+        StringJoiner sj = new StringJoiner(",", "[", "]");
         for (Field field : fields) {
             StringJoiner fieldJoiner = new StringJoiner(": ", "{", "}");
             fieldJoiner.add(field.getName()).add(field.getValue());
