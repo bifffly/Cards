@@ -1,6 +1,8 @@
 package deck;
 
-public class Side {
+import java.io.Serializable;
+
+public class Side implements Serializable {
     private String name;
     private String value;
 

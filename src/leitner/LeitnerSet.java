@@ -2,10 +2,12 @@ package leitner;
 
 import deck.Card;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 import static leitner.LeitnerEnum.*;
 
-public class LeitnerSet {
+public class LeitnerSet implements Serializable {
     private List<LeitnerBox> leitnerSet;
     private String name;
     private static Map<String, Integer> map;
@@ -103,6 +105,28 @@ public class LeitnerSet {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    private LocalDate getDateToShow(Card card) {
+        LeitnerEnum leitnerEnum = getContainer(card).getLeitnerEnum();
+        long interval = leitnerEnum.getInterval();
+        return card.getDateLastAccessed().plusDays(interval);
+    }
+
+    private boolean isTimeToShow(Card card) {
+        return !LocalDate.now().isBefore(getDateToShow(card));
+    }
+
+    public List<Card> cardsToShow() {
+        List<Card> cards = new ArrayList<>();
+        for (LeitnerBox leitnerBox : leitnerSet) {
+            for (Card card : leitnerBox.getCards()) {
+                if (isTimeToShow(card)) {
+                    cards.add(card);
+                }
+            }
+        }
+        return cards;
     }
 
     @Override

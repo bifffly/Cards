@@ -1,22 +1,24 @@
 package deck;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.StringJoiner;
 
-public class Card {
+public class Card implements Serializable {
     private Side front;
     private Side back;
-    private Date dateLastAccessed;
+    private LocalDate dateLastAccessed;
 
     public Card() {
-        this.front = new Side("front");
-        this.back = new Side("back");
+        this(new Side("front"), new Side("back"));
     }
 
     public Card(Side front, Side back) {
         this.front = front;
         this.back = back;
+        this.dateLastAccessed = LocalDate.now();
     }
 
     public Side getFront() {
@@ -28,10 +30,10 @@ public class Card {
     }
 
     public void updateDate() {
-        dateLastAccessed = new Date(System.currentTimeMillis());
+        dateLastAccessed = LocalDate.now();
     }
 
-    public Date getDateLastAccessed() {
+    public LocalDate getDateLastAccessed() {
         return dateLastAccessed;
     }
 

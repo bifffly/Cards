@@ -2,10 +2,11 @@ package leitner;
 
 import deck.Card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeitnerBox {
+public class LeitnerBox implements Serializable {
     private final LeitnerEnum leitnerEnum;
     private List<Card> cards;
 

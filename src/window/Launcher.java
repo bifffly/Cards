@@ -15,11 +15,13 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import leitner.LeitnerSet;
 
-import java.io.File;
+import java.io.*;
 
 public class Launcher extends Application {
-    Button loadButton = new Button("Load from file");
+    Button loadButton = new Button("Load new deck");
+    Button loadFromSaveButton = new Button("Load saved deck");
     Stage primaryStage = null;
     MainApp mainApp = null;
 
@@ -36,6 +38,7 @@ public class Launcher extends Application {
 
         GridPane gridPane = new GridPane();
         gridPane.add(loadButton, 0, 0);
+        gridPane.add(loadFromSaveButton, 1, 0);
         gridPane.setHgap(6);
         gridPane.setVgap(6);
 
@@ -96,7 +99,78 @@ public class Launcher extends Application {
                     return;
                 }
                 LeitnerSetReader leitnerSetReader = new LeitnerSetReader(file);
-                mainApp = new MainApp(leitnerSetReader);
+                leitnerSetReader.read();
+                LeitnerSet leitnerSet = leitnerSetReader.getLeitnerSet();
+                String fileName = file.getAbsolutePath().replaceAll(".deck", "") + ".dobj";
+                try {
+                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
+                    oos.writeObject(leitnerSet);
+                    oos.close();
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mainApp = new MainApp(leitnerSetReader.getLeitnerSet());
+                primaryStage.hide();
+            }
+        });
+
+        loadFromSaveButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage loadingStage = new Stage();
+                loadingStage.setTitle("File Chooser");
+
+                boolean fileNeeded = true;
+                boolean hasCanceled = false;
+
+                File file = null;
+
+                while (fileNeeded && !hasCanceled) {
+                    FileChooser fileChooser = new FileChooser();
+
+                    fileChooser.getExtensionFilters().addAll(
+                        new FileChooser.ExtensionFilter("Deck Object Files (*.dobj)", "*.dobj"),
+                        new FileChooser.ExtensionFilter("All Files", "*.*")
+                    );
+
+                    file = fileChooser.showOpenDialog(loadingStage);
+
+                    hasCanceled = (file == null);
+                    if (hasCanceled) {
+                        break;
+                    }
+
+                    fileNeeded = (!file.getName().endsWith(".dobj"));
+
+                    if (fileNeeded) {
+                        Alert alert = new Alert(
+                            Alert.AlertType.ERROR,
+                            "Improper file extension.",
+                            ButtonType.OK
+                        );
+                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                        alert.showAndWait();
+
+                        loadingStage.hide();
+
+                        fileNeeded = true;
+                        hasCanceled = false;
+                    }
+                }
+
+                if (hasCanceled) {
+                    return;
+                }
+                try {
+                    ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+                    LeitnerSet ls = (LeitnerSet)ois.readObject();
+                    ois.close();
+                    mainApp = new MainApp(ls);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
                 primaryStage.hide();
             }
         });

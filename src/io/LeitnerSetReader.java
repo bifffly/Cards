@@ -57,18 +57,15 @@ public class LeitnerSetReader {
 
     private void scanCard() {
         String line = scanner.nextLine();
-        int enumInteger = Integer.parseInt(line.substring(line.length() - 1, line.length()));
-        LeitnerEnum leitnerEnum = enums[enumInteger];
-        line = line.substring(1, line.length() - 3);
+        line = line.substring(1, line.length() - 1);
         Map<String, Side> sides = readSides(line);
-        leitnerSet.getLeitnerBox(leitnerEnum).add(new Card(sides.get("front"), sides.get("back")));
+        leitnerSet.getLeitnerBox(LeitnerEnum.NOTINTRODUCED).add(new Card(sides.get("front"), sides.get("back")));
     }
 
     private Map<String, Side> readSides(String string) {
         Map<String, Side> sides = new HashMap<>();
         int i = 0;
-        for (String side : string.split(",")) {
-            side = side.replaceAll("\\s+", "");
+        for (String side : string.split(",\\s+")) {
             side = side.substring(1, side.length() - 1);
             String[] arr = side.split(":");
             if (arr.length != 2) {

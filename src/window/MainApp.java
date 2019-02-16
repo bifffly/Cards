@@ -53,10 +53,8 @@ public class MainApp {
 
     private Stage bigStage = new Stage();
 
-    public MainApp(LeitnerSetReader leitnerSetReader) {
-        leitnerSetReader.read();
-        leitnerSet = leitnerSetReader.getLeitnerSet();
-
+    public MainApp(LeitnerSet leitnerSet) {
+        this.leitnerSet = leitnerSet;
         initStage();
     }
 
@@ -75,5 +73,7 @@ public class MainApp {
         bigStage.show();
     }
 
-    private void
+    private void startPractice() {
+
+    }
 }
