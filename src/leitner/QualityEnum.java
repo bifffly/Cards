@@ -1,5 +1,5 @@
 package leitner;
 
 public enum QualityEnum {
-    EASY, MEDIUM, HARD
+    EASY, MEDIUM, HARD, AGAIN
 }

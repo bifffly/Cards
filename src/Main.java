@@ -1,8 +1,8 @@
 import deck.Card;
 import leitner.LeitnerEnum;
 import leitner.LeitnerSet;
-import read.LeitnerSetReader;
-import write.LeitnerSetWriter;
+import io.LeitnerSetReader;
+import io.LeitnerSetWriter;
 
 import java.io.File;
 
