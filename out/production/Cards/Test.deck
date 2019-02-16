@@ -1,3 +1,3 @@
 Russian:
-[{English: boy}, {Russian: мальчик}]:0
-[{English: cat}, {Russian: кошка}]:8
+[{front: boy}, {back: мальчик}]:0
+[{front: gato}, {back: chat}]:8

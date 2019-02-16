@@ -1,7 +1,7 @@
 package io;
 
 import deck.Card;
-import deck.Field;
+import deck.Side;
 import leitner.LeitnerEnum;
 import leitner.LeitnerSet;
 
@@ -55,33 +55,33 @@ public class LeitnerSetReader {
         }
     }
 
-    private List<String> getFieldNames() {
-        String line = scanner.nextLine();
-        String[] fieldArr = line.split(",");
-        return Arrays.asList(fieldArr);
-    }
-
     private void scanCard() {
         String line = scanner.nextLine();
         int enumInteger = Integer.parseInt(line.substring(line.length() - 1, line.length()));
         LeitnerEnum leitnerEnum = enums[enumInteger];
         line = line.substring(1, line.length() - 3);
-
-        leitnerSet.getLeitnerBox(leitnerEnum).add(new Card(readFields(line)));
+        Map<String, Side> sides = readSides(line);
+        leitnerSet.getLeitnerBox(leitnerEnum).add(new Card(sides.get("front"), sides.get("back")));
     }
 
-    private List<Field> readFields(String string) {
-        List<Field> fields = new ArrayList<>();
-        for (String field : string.split(",")) {
-            field = field.replaceAll("\\s+", "");
-            field = field.substring(1, field.length() - 1);
-            String[] arr = field.split(":");
+    private Map<String, Side> readSides(String string) {
+        Map<String, Side> sides = new HashMap<>();
+        int i = 0;
+        for (String side : string.split(",")) {
+            side = side.replaceAll("\\s+", "");
+            side = side.substring(1, side.length() - 1);
+            String[] arr = side.split(":");
             if (arr.length != 2) {
                 throw new ReadException("Malformed card.");
             }
-            fields.add(new Field(arr[0], arr[1]));
+            if ("front".equals(arr[0].toLowerCase()) || "back".equals(arr[0].toLowerCase())) {
+                sides.put(arr[0], new Side(arr[0], arr[1]));
+            }
+            else {
+                throw new ReadException("Malformed card.");
+            }
         }
-        return fields;
+        return sides;
     }
 
     public LeitnerSet getLeitnerSet() {

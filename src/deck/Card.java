@@ -1,35 +1,36 @@
 package deck;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class Card {
-    private List<Field> fields;
+    private Side front;
+    private Side back;
 
     public Card() {
-        fields = new ArrayList<>();
+        this.front = new Side("front");
+        this.back = new Side("back");
     }
 
-    public Card(List<Field> fields) {
-        this.fields = fields;
+    public Card(Side front, Side back) {
+        this.front = front;
+        this.back = back;
     }
 
-    public String getField(String name) {
-        for (Field field : fields) {
-            if (field.getName().equals(name)) {
-                return field.getValue();
-            }
-        }
-        return null;
+    public Side getFront() {
+        return front;
+    }
+
+    public Side getBack() {
+        return back;
     }
 
     @Override
     public String toString() {
         StringJoiner sj = new StringJoiner(",", "[", "]");
-        for (Field field : fields) {
+        for (Side side : Arrays.asList(front, back)) {
             StringJoiner fieldJoiner = new StringJoiner(": ", "{", "}");
-            fieldJoiner.add(field.getName()).add(field.getValue());
+            fieldJoiner.add(side.getName()).add(side.getValue());
             sj.add(fieldJoiner.toString());
         }
         return sj.toString();
