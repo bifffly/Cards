@@ -37,7 +37,7 @@ public class LeitnerSet {
 
     private LeitnerEnum getPromoted(LeitnerEnum leitnerEnum) {
         switch (leitnerEnum) {
-            case NOTINTRODUCED: return LeitnerEnum.DAILY;
+            case NOTINTRODUCED: return DAILY;
             case DAILY: return BIWEEKLY;
             case BIWEEKLY: return WEEKLY;
             case WEEKLY: return TWOWEEKS;
@@ -52,7 +52,7 @@ public class LeitnerSet {
 
     private LeitnerEnum getDemoted(LeitnerEnum leitnerEnum) {
         switch (leitnerEnum) {
-            case NOTINTRODUCED: return null;
+            case NOTINTRODUCED: return NOTINTRODUCED;
             case DAILY: return DAILY;
             case BIWEEKLY: return DAILY;
             case WEEKLY: return BIWEEKLY;

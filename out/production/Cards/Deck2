@@ -1,5 +1,5 @@
 Russian:
-[{English: boy},{Russian: мальчик}]:0
 [{English: girl},{Russian: девочка}]:0
-[{English: man},{Russian: мужчина}]:7
-[{English: woman},{Russian: женщина}]:7
+[{English: boy},{Russian: мальчик}]:1
+[{English: man},{Russian: мужчина}]:6
+[{English: woman},{Russian: женщина}]:8

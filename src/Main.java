@@ -1,3 +1,5 @@
+import deck.Card;
+import leitner.LeitnerEnum;
 import leitner.LeitnerSet;
 import read.LeitnerSetReader;
 import write.LeitnerSetWriter;
@@ -11,10 +13,18 @@ public class Main {
         LeitnerSet leitnerSet = leitnerSetReader.getLeitnerSet();
 
         LeitnerSetWriter leitnerSetWriter = new LeitnerSetWriter(new File("src/Deck2"), leitnerSet);
-        leitnerSetWriter.write();
 
-        leitnerSetReader = new LeitnerSetReader(new File("src/Deck2"));
-        leitnerSetReader.read();
-        System.out.println(leitnerSetReader.getLeitnerSet());
+        Card card = leitnerSet.getLeitnerBox(LeitnerEnum.NOTINTRODUCED).getCards().get(0);
+        leitnerSet.promoteCard(card);
+
+        Card card1 = leitnerSet.getLeitnerBox(LeitnerEnum.NOTINTRODUCED).getCards().get(0);
+        leitnerSet.demoteCard(card1);
+
+        Card card2 = leitnerSet.getLeitnerBox(LeitnerEnum.TWOMONTHS).getCards().get(0);
+        leitnerSet.promoteCard(card2);
+
+        Card card3 = leitnerSet.getLeitnerBox(LeitnerEnum.SIXWEEKS).getCards().get(0);
+        leitnerSet.demoteCard(card3);
+        leitnerSetWriter.write();
     }
 }
