@@ -21,6 +21,7 @@ import java.io.File;
 public class Launcher extends Application {
     Button loadButton = new Button("Load from file");
     Stage primaryStage = null;
+    MainApp mainApp = null;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -95,8 +96,7 @@ public class Launcher extends Application {
                     return;
                 }
                 LeitnerSetReader leitnerSetReader = new LeitnerSetReader(file);
-                leitnerSetReader.read();
-                System.out.println(leitnerSetReader.getLeitnerSet());
+                mainApp = new MainApp(leitnerSetReader);
                 primaryStage.hide();
             }
         });

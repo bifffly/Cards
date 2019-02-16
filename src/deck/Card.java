@@ -1,11 +1,13 @@
 package deck;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.StringJoiner;
 
 public class Card {
     private Side front;
     private Side back;
+    private Date dateLastAccessed;
 
     public Card() {
         this.front = new Side("front");
@@ -23,6 +25,14 @@ public class Card {
 
     public Side getBack() {
         return back;
+    }
+
+    public void updateDate() {
+        dateLastAccessed = new Date(System.currentTimeMillis());
+    }
+
+    public Date getDateLastAccessed() {
+        return dateLastAccessed;
     }
 
     @Override

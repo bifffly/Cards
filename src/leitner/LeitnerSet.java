@@ -14,8 +14,7 @@ public class LeitnerSet {
         map = new HashMap<>();
         int i = 0;
         for (LeitnerEnum leitnerEnum : LeitnerEnum.values()) {
-            map.put(leitnerEnum.toString(), i);
-            i++;
+            map.put(leitnerEnum.toString(), i++);
         }
     }
 
