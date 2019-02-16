@@ -21,6 +21,10 @@ public class LeitnerSetReader {
     }
 
     public LeitnerSetReader(File file) {
+        String filePath = file.getPath();
+        if (!filePath.endsWith(".deck")) {
+            throw new ReadException("Invalid file extension.");
+        }
         this.leitnerSet = new LeitnerSet();
         this.file = file;
         try {
