@@ -1,7 +1,5 @@
 package leitner;
 
-import deck.Card;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
@@ -9,7 +7,6 @@ import static leitner.LeitnerEnum.*;
 
 public class LeitnerSet implements Serializable {
     private List<LeitnerBox> leitnerSet;
-    private String name;
     private static Map<String, Integer> map;
 
     static {
@@ -25,6 +22,14 @@ public class LeitnerSet implements Serializable {
         for (LeitnerEnum value : LeitnerEnum.values()) {
             leitnerSet.add(new LeitnerBox(value));
         }
+    }
+
+    private List<Card> getAllCards() {
+        List<Card> cards = new ArrayList<>();
+        for (LeitnerBox leitnerBox : leitnerSet) {
+            cards.addAll(leitnerBox.getCards());
+        }
+        return cards;
     }
 
     public LeitnerBox getLeitnerBox(LeitnerEnum leitnerEnum) {
@@ -72,7 +77,7 @@ public class LeitnerSet implements Serializable {
                 return leitnerBox;
             }
         }
-        return null;
+        throw new NoSuchElementException();
     }
 
     private boolean contains(Card card) {
@@ -99,12 +104,13 @@ public class LeitnerSet implements Serializable {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void relegateCard(Card card) {
+        if (contains(card)) {
+            LeitnerBox leitnerBox = getContainer(card);
+            LeitnerBox destination = getLeitnerBox(DAILY);
+            leitnerBox.remove(card);
+            destination.add(card);
+        }
     }
 
     private LocalDate getDateToShow(Card card) {
@@ -117,25 +123,57 @@ public class LeitnerSet implements Serializable {
         return !LocalDate.now().isBefore(getDateToShow(card));
     }
 
-    public List<Card> cardsToShow() {
+    public Queue<Card> cardsToShow() {
+        List<Card> cardsToIntroduce = new ArrayList<>();
+        for (Card card : getLeitnerBox(NOTINTRODUCED).getCards()) {
+            if (cardsToIntroduce.size() < 20) {
+                cardsToIntroduce.add(card);
+            }
+        }
         List<Card> cards = new ArrayList<>();
         for (LeitnerBox leitnerBox : leitnerSet) {
-            for (Card card : leitnerBox.getCards()) {
-                if (isTimeToShow(card)) {
-                    cards.add(card);
+            if (leitnerBox.getLeitnerEnum() != NOTINTRODUCED) {
+                for (Card card : leitnerBox.getCards()) {
+                    if (isTimeToShow(card)) {
+                        cards.add(card);
+                    }
                 }
             }
         }
-        return cards;
+        cards.addAll(cardsToIntroduce);
+        return new ArrayDeque<>(cards);
+    }
+
+    public CategoryEnum categorizeCard(Card card) {
+        if (contains(card)) {
+            LeitnerEnum leitnerEnum = getContainer(card).getLeitnerEnum();
+            switch (leitnerEnum) {
+                case NOTINTRODUCED: return CategoryEnum.UNSEEN;
+                case DAILY:
+                case BIWEEKLY:
+                case WEEKLY:
+                case TWOWEEKS:
+                case THREEWEEKS: return CategoryEnum.YOUNG;
+                default: return CategoryEnum.MATURE;
+            }
+        }
+        throw new NoSuchElementException();
+    }
+
+    public int getCountOfCardsInCategory(CategoryEnum categoryEnum) {
+        int count = 0;
+        for (Card card : getAllCards()) {
+            count += (categoryEnum == categorizeCard(card) ? 1 : 0);
+        }
+        return count;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(name + ":\n");
         for (LeitnerBox leitnerBox : leitnerSet) {
             for (Card card : leitnerBox.getCards()) {
-                sb.append(card.toString() + ":" + map.get(leitnerBox.getLeitnerEnum().toString()) + "\n");
+                sb.append(card.toString() + '\n');
             }
         }
         return sb.toString();

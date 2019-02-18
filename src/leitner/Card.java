@@ -1,31 +1,30 @@
-package deck;
+package leitner;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.StringJoiner;
 
 public class Card implements Serializable {
-    private Side front;
-    private Side back;
+    private String front;
+    private String back;
     private LocalDate dateLastAccessed;
 
     public Card() {
-        this(new Side("front"), new Side("back"));
+        this(null, null);
     }
 
-    public Card(Side front, Side back) {
+    public Card(String front, String back) {
         this.front = front;
         this.back = back;
         this.dateLastAccessed = LocalDate.now();
     }
 
-    public Side getFront() {
+    public String getFront() {
         return front;
     }
 
-    public Side getBack() {
+    public String getBack() {
         return back;
     }
 
@@ -39,12 +38,6 @@ public class Card implements Serializable {
 
     @Override
     public String toString() {
-        StringJoiner sj = new StringJoiner(",", "[", "]");
-        for (Side side : Arrays.asList(front, back)) {
-            StringJoiner fieldJoiner = new StringJoiner(": ", "{", "}");
-            fieldJoiner.add(side.getName()).add(side.getValue());
-            sj.add(fieldJoiner.toString());
-        }
-        return sj.toString();
+        return front + ", " + back;
     }
 }
